@@ -17,9 +17,12 @@ interface MapComponentProps {
   reports: Report[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type LeafletMap = any;
+
 export default function MapComponent({ center, zoom, reports }: MapComponentProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap>(null);
   const isInitializingRef = useRef<boolean>(false);
   const [isMapReady, setIsMapReady] = useState(false);
 
@@ -31,11 +34,15 @@ export default function MapComponent({ center, zoom, reports }: MapComponentProp
     if (mapInstanceRef.current) return;
     isInitializingRef.current = true;
     // If Leaflet already attached to this container, reset it
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((mapContainerRef.current as any)._leaflet_id) {
       try {
         mapContainerRef.current.innerHTML = "";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         delete (mapContainerRef.current as any)._leaflet_id;
-      } catch {}
+      } catch {
+        // Ignore errors
+      }
     }
 
     const initMap = async () => {
@@ -73,7 +80,7 @@ export default function MapComponent({ center, zoom, reports }: MapComponentProp
       if (mapInstanceRef.current) {
         try {
           mapInstanceRef.current.remove();
-        } catch (e) {
+        } catch {
           // Ignore cleanup errors
         }
         mapInstanceRef.current = null;
@@ -82,6 +89,7 @@ export default function MapComponent({ center, zoom, reports }: MapComponentProp
         if (mapContainerRef.current) {
           try {
             mapContainerRef.current.innerHTML = "";
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             delete (mapContainerRef.current as any)._leaflet_id;
           } catch {}
         }
@@ -101,6 +109,7 @@ export default function MapComponent({ center, zoom, reports }: MapComponentProp
     if (!mapInstanceRef.current || !isMapReady) return;
 
     // Clear existing markers
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mapInstanceRef.current.eachLayer((layer: any) => {
       if (layer._url && layer._url.includes('tile.openstreetmap.org')) {
         // Keep tile layers
@@ -110,8 +119,8 @@ export default function MapComponent({ center, zoom, reports }: MapComponentProp
     });
 
     // Add new markers
-    reports.forEach((report) => {
-      const L = require('leaflet');
+    reports.forEach(async (report) => {
+      const L = await import('leaflet');
       L.circleMarker([report.latitude, report.longitude], {
         radius: 6,
         color: 'red',
