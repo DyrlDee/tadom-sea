@@ -49,6 +49,8 @@ export default function HeatmapPage() {
 
   // Handle map errors
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const handleMapError = () => {
       setStatus("Map error detected. Click 'Refresh Map' to fix.");
     };
@@ -156,7 +158,13 @@ export default function HeatmapPage() {
                 <span className="text-sm text-gray-600">Latest Report:</span>
                 <span className="text-sm font-medium text-gray-900">
                   {reports.length > 0 
-                    ? new Date(reports[0].created_at).toLocaleDateString()
+                    ? (() => {
+                        try {
+                          return new Date(reports[0].created_at).toLocaleDateString();
+                        } catch {
+                          return 'Invalid Date';
+                        }
+                      })()
                     : 'N/A'
                   }
                 </span>
