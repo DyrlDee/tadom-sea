@@ -77,14 +77,10 @@ export default function Home() {
       </div>
 
       {/* Stats Section */}
-      <div className="grid gap-4 sm:grid-cols-3 mt-12">
+      <div className="grid gap-4 sm:grid-cols-2 mt-12">
         <div className="card p-6 text-center">
           <div className="text-2xl font-bold text-blue-600">0</div>
           <div className="text-sm text-gray-600 mt-1">Reports Submitted</div>
-        </div>
-        <div className="card p-6 text-center">
-          <div className="text-2xl font-bold text-green-600">0</div>
-          <div className="text-sm text-gray-600 mt-1">Areas Monitored</div>
         </div>
         <div className="card p-6 text-center">
           <div className="text-2xl font-bold text-purple-600">Active</div>
